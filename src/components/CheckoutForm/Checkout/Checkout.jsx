@@ -2,17 +2,42 @@
 import React from 'react'
 import {Paper , Stepper , Step , Typography , CircularProgress , Divider , Button, StepLabel} from '@material-ui/core';
 
+import {commerce} from '../../lib/commerce';
 import useStyles from './styles';
 import AddressForm from '../AddressForm';
 import PaymentForm from '../PaymentForm';
+import { useEffect , useState} from 'react';
 
-export default function Checkout() {
+
+export default function Checkout( {cart} ) {
   const [activeStep , setActiveStep] = React.useState(1);
+  const [checkoutToken, setCheckoutToken] = useState(null)
   const classes = useStyles();
-  const steps = ['Shippong adress', 'Payment details'];
 
-  const Form = () => activeStep === 0 ? <AddressForm /> :<PaymentForm />; 
-  const Confirmation = ()=>(<div>Confirmation</div>)
+  // as soon as someone enter into the checkout process, a new checkout token will be generated 
+  // the generateToken function is already exists in the backend
+  useEffect(() => {
+    if (cart.id) {
+      const generateToken = async () => {
+        try {
+          const token = await commerce.checkout.generateToken(cart.id, { type: 'cart' });
+
+          setCheckoutToken(token);
+        } catch {
+         // if (activeStep !== steps.length) history.push('/');
+        }
+      };
+
+      generateToken(); // in useEffect I can not use async unless it's a new function
+    }
+  }, [cart]); // as soon as the cart is been chenged then recall the generateToken function to generate a new token
+
+  const steps = ['Shippong adress', 'Payment details'];
+                                  // passing the checkout token to the address form
+  const Form = () => activeStep === 0 ? <AddressForm checkoutToken={checkoutToken}/> :<PaymentForm />; 
+
+  const Confirmation = () => (<div>Confirmation</div>);
+
   return (
     <>
       <div className={classes.toolbar} />
@@ -22,8 +47,10 @@ export default function Checkout() {
           <Stepper activeStep={activeStep} className={classes.stepper}>
             {steps.map((step) => (<Step key={step}> <StepLabel> {step} </StepLabel> </Step>))}
           </Stepper>
-
-          {activeStep === steps.length ? <Confirmation /> : <Form /> }
+     {/* in this case , at this point we still didnt call the checkoutToken so i still don't have it
+      while the address is depends on it. in this case I wanna add one more check to show this form by checkoutToken && <Form /> 
+      so. ONLY when I have the checkouToken  you can render the form */}
+          {activeStep === steps.length ? <Confirmation /> : checkoutToken && <Form /> }
 
         </Paper>
       </main>

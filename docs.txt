@@ -38,3 +38,8 @@ useLocation :
    is used to know where in the page I'm -> import {useLocation} from 'react-router-dom' then->
    I added insdie the function -> const location = useLocation. Inside the variable location I need one property (pathname) =>
    location.pathname === '/' &&(<div> <button> </button> </div>) // that mwans if the local pathname is root -> then show this div otherowise don't show it 
+
+
+   ________________________
+   To convert an object to an array you use one of three methods:
+    Object.keys(), Object.values(), and Object.entries().
