@@ -1,0 +1,40 @@
+// this is the how to show the product in the grid depending on the sizr of the screen -> 
+//<Grid item xs={12} sm={6} md={4} lg={3}> <product /> </Grid>  xs xsmall - md medium 
+
+Card:
+Cards contain content and actions about a single subject.
+
+typography:
+used for any kind of text in material ui 
+
+every time that i wanna loop through somthing in jsx  need to have an id which is in this case comes through the map --> map((x) => (<Grid item key={x.id}></Grid>)) 
+
+      this is how to render html inside of js / react component -> dangerouslySetInnerHTML ={{__html:product.description}} =>
+ <Typography dangerouslySetInnerHTML ={{__html:product.description}} variant="body2" color='textSecondary'> {product.description} </Typography>
+    
+________________________
+
+this action allows me to make the IconButton as a button ->
+component={Link} to="/cart" 
+by adding it as a prop to the IconButton
+<IconButton component={Link} to="/cart" aria-label="Show cart items" color="inherit">
+
+________________________
+
+
+ ________________________
+  gutterBottom works similar to margin-bottom
+
+  ________________________
+  FormProvider: 
+ is a higher-order component that provides the form context to its children. 
+ It solves the problem where data is passed through the component tree without having to pass props down manually at every level.
+------------------
+ Controller : 
+   React Hook Form provides the wrapper Controller component that allows you to register a controlled external component,
+   similar to how the register method works.
+------------------
+useLocation :
+   is used to know where in the page I'm -> import {useLocation} from 'react-router-dom' then->
+   I added insdie the function -> const location = useLocation. Inside the variable location I need one property (pathname) =>
+   location.pathname === '/' &&(<div> <button> </button> </div>) // that mwans if the local pathname is root -> then show this div otherowise don't show it 
