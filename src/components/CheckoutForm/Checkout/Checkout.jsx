@@ -1,18 +1,18 @@
+import React, { useState, useEffect } from 'react';
+import { CssBaseline, Paper, Stepper, Step, StepLabel, Typography, CircularProgress, Divider, Button } from '@material-ui/core';
+import { Link, useHistory } from 'react-router-dom';
 
-import React from 'react'
-import {Paper , Stepper , Step , Typography , CircularProgress , Divider , Button, StepLabel} from '@material-ui/core';
-
-import {commerce} from '../../lib/commerce';
-import useStyles from './styles';
+import { commerce } from '../../../lib/commerce';
 import AddressForm from '../AddressForm';
 import PaymentForm from '../PaymentForm';
-import { useEffect , useState} from 'react';
+import useStyles from './styles';
 
 
-export default function Checkout( {cart} ) {
-  const [activeStep , setActiveStep] = React.useState(1);
+export default function Checkout({ cart, onCaptureCheckout, order, error }) {
+  const [activeStep , setActiveStep] = React.useState(0); // 0 = address, 1 = payment
   const [checkoutToken, setCheckoutToken] = useState(null)
   const classes = useStyles();
+  const [shippingData , setShippingData] = useState({});
 
   // as soon as someone enter into the checkout process, a new checkout token will be generated 
   // the generateToken function is already exists in the backend
@@ -21,20 +21,24 @@ export default function Checkout( {cart} ) {
       const generateToken = async () => {
         try {
           const token = await commerce.checkout.generateToken(cart.id, { type: 'cart' });
-
           setCheckoutToken(token);
-        } catch {
-         // if (activeStep !== steps.length) history.push('/');
+        } catch {// if (activeStep !== steps.length) history.push('/');      
         }
       };
-
       generateToken(); // in useEffect I can not use async unless it's a new function
     }
   }, [cart]); // as soon as the cart is been chenged then recall the generateToken function to generate a new token
 
   const steps = ['Shippong adress', 'Payment details'];
-                                  // passing the checkout token to the address form
-  const Form = () => activeStep === 0 ? <AddressForm checkoutToken={checkoutToken}/> :<PaymentForm />; 
+  //  passing the checkout token to the address form
+  const Form = () => (activeStep === 0
+    ? <AddressForm checkoutToken={checkoutToken} nextStep={nextStep} setShippingData={setShippingData} test={test} />
+    : <PaymentForm checkoutToken={checkoutToken} nextStep={nextStep} backStep={backStep} shippingData={shippingData} onCaptureCheckout={onCaptureCheckout} />);
+
+  //  this function will be called when the addressfrom is submitted//
+  const next = (data) => { setShippingData(data); };
+  const nextStep = () => { setActiveStep((prevActiveStep)=> prevActiveStep + 1); }; // decrement the activeStep by 1 like from address form to payment form
+  const backStep = () => { setActiveStep((prevActiveStep)=> prevActiveStep - 1); }; 
 
   const Confirmation = () => (<div>Confirmation</div>);
 
@@ -47,9 +51,7 @@ export default function Checkout( {cart} ) {
           <Stepper activeStep={activeStep} className={classes.stepper}>
             {steps.map((step) => (<Step key={step}> <StepLabel> {step} </StepLabel> </Step>))}
           </Stepper>
-     {/* in this case , at this point we still didnt call the checkoutToken so i still don't have it
-      while the address is depends on it. in this case I wanna add one more check to show this form by checkoutToken && <Form /> 
-      so. ONLY when I have the checkouToken  you can render the form */}
+
           {activeStep === steps.length ? <Confirmation /> : checkoutToken && <Form /> }
 
         </Paper>
@@ -57,6 +59,9 @@ export default function Checkout( {cart} ) {
     </>
   );
 }
+
+
+
 
 
 // Steps the steps is the trucker that track the order when status
@@ -70,6 +75,12 @@ export default function Checkout( {cart} ) {
 _______
 
 {activeStep === steps.length ? <Confirmation/> : <Form/>} if activeStep is in the last step then show the confirmation
+
+
+     {/* in this case , at this point we still didnt call the checkoutToken so i still don't have it
+      while the address is depends on it. in this case I wanna add one more check to show this form by checkoutToken && <Form /> 
+      so. ONLY when I have the checkouToken  you can render the form 
+      {activeStep === steps.length ? <Confirmation /> : checkoutToken && <Form /> }
 
 */
 

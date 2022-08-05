@@ -3,7 +3,7 @@ import { Grid, TextField } from '@material-ui/core';
 import { useFormContext, Controller } from 'react-hook-form';
 
 // the outfit of the adress form
-export default function FormInput({ name , label , required }) {
+export default function FormInput({ name, label }) {
   const { control } = useFormContext();
   return (
     <Grid item xs={12} sm={6}>
@@ -13,7 +13,7 @@ export default function FormInput({ name , label , required }) {
         fullWidth
         name={name}
         label={label}
-        required={required}
+        required
       />
 
     </Grid>

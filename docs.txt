@@ -39,7 +39,15 @@ useLocation :
    I added insdie the function -> const location = useLocation. Inside the variable location I need one property (pathname) =>
    location.pathname === '/' &&(<div> <button> </button> </div>) // that mwans if the local pathname is root -> then show this div otherowise don't show it 
 
+Divider:
+A divider is a thin line that groups content in lists and layouts. like <br>
+
 
    ________________________
    To convert an object to an array you use one of three methods:
-    Object.keys(), Object.values(), and Object.entries().
+    Object.keys(), Object.values(), and { Object.entries() -> gives key:value}.
+    -----
+   convert the object to an array and loop over then distracture the object to get the code and name preoperties from it.
+   Then make the id = code and the label = name    
+   //{ Object.entries() -> gives key:value}//        
+  {Object.entries(shippingCountries).map(([code, name])=>({id: code , name: label}))}  
